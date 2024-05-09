@@ -8,7 +8,7 @@ const routes = require("./routes/todoRoutes");
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 

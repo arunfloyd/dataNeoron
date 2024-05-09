@@ -26,7 +26,7 @@ const ResizableComponent = () => {
     const gettingData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8080/api/getAllTasks"
+          "http://13.201.0.124/api/getAllTasks"
         );
         const count = await axios.get("http://localhost:8080/api/getCount");
         const countData = count.data.count;
@@ -44,7 +44,7 @@ const ResizableComponent = () => {
     try {
       const newTask = { text: taskInput, completed: false };
       console.log(taskInput);
-      await axios.post("http://localhost:8080/api/addTask", {
+      await axios.post("http://13.201.0.124/api/addTask", {
         tasks: taskInput,
       });
       setTaskInput("");
