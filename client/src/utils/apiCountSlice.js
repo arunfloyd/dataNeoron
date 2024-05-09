@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// Redux Store for API count
+
 const apiCountSlice = createSlice({
   name: "count",
   initialState: null,

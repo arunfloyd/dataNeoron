@@ -1,4 +1,6 @@
 const express = require("express");
+
+// Here the routes have been set for each API calls
 const router = express.Router();
 const {
   addTask,

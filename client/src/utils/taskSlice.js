@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// Redux store for Task 
+
 const taskSlice = createSlice({
   name: "user",
   initialState: null,

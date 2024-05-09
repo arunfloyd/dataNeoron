@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import ResizePanel from "react-resize-panel";
 import { addTask } from "../utils/taskSlice";
 import { addCount } from "../utils/apiCountSlice";
+import LeftPanel from "./LeftPanel";
+import RightPanel from "./RightPanel";
+import MiddlePanel from "./MiddlePanel";
+import { BASE_URL } from "../utils/constant";
 
 const ResizableComponent = () => {
   const [taskInput, setTaskInput] = useState("");
@@ -17,18 +20,16 @@ const ResizableComponent = () => {
 
   const count = useSelector((store) => store?.apiCount);
 
-  console.log(user?.task);
   const handleChange = (e) => {
     setTaskInput(e.target.value);
   };
 
+  // To Access the Saved API Count and the ToDo Datas
   useEffect(() => {
     const gettingData = async () => {
       try {
-        const response = await axios.get(
-          "http://13.201.0.124/api/getAllTasks"
-        );
-        const count = await axios.get("http://localhost:8080/api/getCount");
+        const response = await axios.get(`${BASE_URL}/getAllTasks`);
+        const count = await axios.get(`${BASE_URL}/getCount`);
         const countData = count.data.count;
         const data = response.data;
         console.log(countData);
@@ -40,11 +41,14 @@ const ResizableComponent = () => {
     };
     gettingData();
   }, [updateCount]);
+
+  // Here the User can add the Task
+
   const handleSubmit = async () => {
     try {
       const newTask = { text: taskInput, completed: false };
       console.log(taskInput);
-      await axios.post("http://13.201.0.124/api/addTask", {
+      await axios.post(`${BASE_URL}/addTask`, {
         tasks: taskInput,
       });
       setTaskInput("");
@@ -53,25 +57,22 @@ const ResizableComponent = () => {
       console.error("Error adding task:", error);
     }
   };
-  // const handleEdit = (index) => {
-  //   const updatedTasks = [...tasks];
-  //   updatedTasks[index].text = prompt("Edit Task:", updatedTasks[index].text);
-  //   setTasks(updatedTasks);
-  //   setUpdateCount(updateCount + 1);
-  // };
+
+  //Here the task can be deleted by the user
 
   const handleDelete = async (taskId) => {
-    try {
-      // Call backend API to update task data
-      await axios.delete(`http://localhost:8080/api/deleteTask/${taskId}`);
-
-      // Dispatch action to update task data in Redux store
-      // dispatch(updateTaskInStore(editedTask));
-      setUpdateCount(updateCount + 1);
-    } catch (error) {
-      console.error("Error editing task:", error);
+    // Ask for confirmation
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      try {
+        await axios.delete(`${BASE_URL}/deleteTask/${taskId}`);
+        setUpdateCount(updateCount + 1);
+      } catch (error) {
+        console.error("Error deleting task:", error);
+      }
     }
   };
+
+  // Here the Task can be Edited
 
   const handleEdit = (taskId) => {
     const taskToEdit = user.task.find((task) => task._id === taskId);
@@ -81,11 +82,7 @@ const ResizableComponent = () => {
 
   const handleSubmitEdit = async () => {
     try {
-      // Call backend API to update task data
-      await axios.put(
-        `http://localhost:8080/api/updateTask/${editedTask._id}`,
-        editedTask
-      );
+      await axios.put(`${BASE_URL}/updateTask/${editedTask._id}`, editedTask);
       setUpdateCount(updateCount + 1);
       setIsModalOpen(false);
       setEditedTask(null);
@@ -93,16 +90,12 @@ const ResizableComponent = () => {
       console.error("Error editing task:", error);
     }
   };
-  
+
   return (
     <div className="container mx-auto mt-8 w-full min-h-screen flex justify-center items-center">
-      
       <div className="w-full h-full flex flex-col justify-center">
         <div className="flex flex-grow justify-center w-full overflow-hidden">
-          <ResizePanel
-            direction="e"
-            style={{ width: "50%", minWidth: "50px", border: "10px solid red" }}
-          >
+          <LeftPanel>
             <div
               key="div0"
               className="w-full flex flex-col flex-grow justify-center overflow-hidden"
@@ -123,11 +116,8 @@ const ResizableComponent = () => {
                 Add Task
               </button>
             </div>
-          </ResizePanel>
-          <ResizePanel
-            direction="w"
-            style={{ width: "50%", minWidth: "50px", border: "10px solid red" }}
-          >
+          </LeftPanel>
+          <RightPanel>
             <div
               key="div1"
               className="w-full flex flex-col flex-wrap flex-grow justify-center overflow-hidden"
@@ -135,6 +125,9 @@ const ResizableComponent = () => {
               <h1 className="text-3xl font-bold mb-4 text-center text-ellipsis text-nowrap underline">
                 API Count{" "}
               </h1>
+
+              {/* If there is count which is got from the API will show here */}
+
               {count &&
                 count?.map((element) => (
                   <h1
@@ -148,17 +141,15 @@ const ResizableComponent = () => {
                   </h1>
                 ))}
             </div>
-          </ResizePanel>
+          </RightPanel>
         </div>
-        <ResizePanel
-          direction="n"
-          style={{ height: "50%", minHeight: "50px", border: "10px solid red" }}
-        >
+        <MiddlePanel>
           <div
             key="div3"
             className="w-full flex flex-col flex-grow justify-center"
           >
-            {/* <h1 className="text-3xl font-bold mb-4 text-center text-ellipsis text-nowrap"> */}
+            {/* Here the task will be shown and also the User can edit and delte the task */}
+
             <table className="border-collapse ">
               <thead>
                 <tr>
@@ -209,37 +200,35 @@ const ResizableComponent = () => {
               </tbody>
             </table>
 
-            {/* Modal */}
+            {/* This the Modal area where the user can edit the task */}
             {isModalOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-    <div className="bg-white p-5 rounded-lg shadow-md max-w-md overflow-auto">
-      <input
-        type="text"
-        value={editedTask.tasks}
-        onChange={(e) =>
-          setEditedTask({...editedTask, tasks: e.target.value })
-        }
-        className="w-full p-2 mb-2 border border-gray-300 rounded"
-      />
-      <button
-        onClick={handleSubmitEdit}
-        className="mt-4 px-4 py-2 border-none rounded cursor-pointer hover:bg-blue-500 hover:text-white"
-      >
-        Submit
-      </button>
-      <button
-        onClick={() => setIsModalOpen(false)}
-        className="mt-4 px-4 py-2 border-none rounded cursor-pointer hover:bg-blue-500 hover:text-white"
-      >
-        Cancel
-      </button>
-    </div>
-  </div>
-)}
-
-          
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                <div className="bg-white p-5 rounded-lg shadow-md max-w-md overflow-auto">
+                  <input
+                    type="text"
+                    value={editedTask.tasks}
+                    onChange={(e) =>
+                      setEditedTask({ ...editedTask, tasks: e.target.value })
+                    }
+                    className="w-full p-2 mb-2 border border-gray-300 rounded"
+                  />
+                  <button
+                    onClick={handleSubmitEdit}
+                    className="mt-4 px-4 py-2 border-none rounded cursor-pointer hover:bg-blue-500 hover:text-white"
+                  >
+                    Submit
+                  </button>
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="mt-4 px-4 py-2 border-none rounded cursor-pointer hover:bg-blue-500 hover:text-white"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        </ResizePanel>
+        </MiddlePanel>
       </div>
     </div>
   );

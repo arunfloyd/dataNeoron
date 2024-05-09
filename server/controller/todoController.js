@@ -2,6 +2,7 @@ const TodoModel = require("../models/todoModel");
 const CountModel = require("../models/countModel");
 const asyncHandler = require("express-async-handler");
 
+// API for adding the new Task
 const addTask = asyncHandler(async (req, res) => {
   const { tasks } = req.body;
   console.log(tasks);
@@ -25,6 +26,8 @@ const addTask = asyncHandler(async (req, res) => {
   }
 });
 
+// API for get all the tasks
+
 const getAllTask = asyncHandler(async (req, res) => {
   try {
     const savedTask = await TodoModel.find();
@@ -34,6 +37,8 @@ const getAllTask = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "Error getting task" });
   }
 });
+
+// API for updation of the task
 
 const updateTask = asyncHandler(async (req, res) => {
   try {
@@ -52,6 +57,8 @@ const updateTask = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "Error getting task" });
   }
 });
+
+// API for deletion of particular task
 const deleteTask = asyncHandler(async (req, res) => {
   try {
     const Id = req.params.id;
@@ -69,6 +76,8 @@ const deleteTask = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "Error getting task" });
   }
 });
+
+// API for getting the Count
 
 const getCountAPI = asyncHandler(async (req, res) => {
   try {
