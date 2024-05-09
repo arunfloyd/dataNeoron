@@ -6,8 +6,8 @@ import ResizePanel from "react-resize-panel";
 const MiddlePanel = ({ children }) => {
   return (
     <ResizePanel
-      direction="e"
-      style={{ height: "50%", minHeight: "50px", border: "8px solid red" }}
+      direction="n"
+      style={{ height: "50%", minHeight: "50px", border: "10px solid black" }}
     >
       {children}
     </ResizePanel>

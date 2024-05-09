@@ -8,6 +8,7 @@ import RightPanel from "./RightPanel";
 import MiddlePanel from "./MiddlePanel";
 import { BASE_URL } from "../utils/constant";
 
+
 const ResizableComponent = () => {
   const [taskInput, setTaskInput] = useState("");
   const [updateCount, setUpdateCount] = useState(0);
@@ -92,7 +93,7 @@ const ResizableComponent = () => {
   };
 
   return (
-    <div className="container mx-auto mt-8 w-full min-h-screen flex justify-center items-center">
+    <div className="container mx-auto mt-8 w-full min-h-screen flex justify-center items-center ">
       <div className="w-full h-full flex flex-col justify-center">
         <div className="flex flex-grow justify-center w-full overflow-hidden">
           <LeftPanel>
@@ -101,7 +102,7 @@ const ResizableComponent = () => {
               className="w-full flex flex-col flex-grow justify-center overflow-hidden"
             >
               <input
-                className="border-black rounded-full bg-slate-600 p-5 mb-4 "
+                className="border-black rounded-full bg-slate-600 p-5 mb-4 text-white font-semibold"
                 type="text"
                 value={taskInput}
                 onChange={handleChange}
@@ -201,6 +202,7 @@ const ResizableComponent = () => {
             </table>
 
             {/* This the Modal area where the user can edit the task */}
+
             {isModalOpen && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                 <div className="bg-white p-5 rounded-lg shadow-md max-w-md overflow-auto">
