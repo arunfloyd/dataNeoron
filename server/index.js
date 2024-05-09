@@ -13,7 +13,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  res.json({ res: "Welcome to data neuron" });
+  res.json({ res: "Welcome " });
+  console.log('good Morning')
 });
 
 app.use("/api", routes);
